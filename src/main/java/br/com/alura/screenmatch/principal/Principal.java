@@ -6,9 +6,12 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.alura.screenmatch.model.DadosSerie;
 import br.com.alura.screenmatch.model.DadosTemporada;
 import br.com.alura.screenmatch.model.Serie;
+import br.com.alura.screenmatch.repository.SerieRepository;
 import br.com.alura.screenmatch.service.ConsumoApi;
 import br.com.alura.screenmatch.service.ConverteDados;
 
@@ -21,8 +24,15 @@ public class Principal {
     private final String API_KEY = "&apikey=6585022c";
     
     private List<DadosSerie> dadosSeries = new ArrayList<>();
+    
+//    @Autowired
+    private SerieRepository repositorio;
+    
+    public Principal(SerieRepository repositorio) {
+    	this.repositorio = repositorio;
+	}
 
-    public void exibeMenu() {
+	public void exibeMenu() {
     	OUTER: while(true) {
 	        var menu = """
 	        		
@@ -57,15 +67,19 @@ public class Principal {
     }
 
     private void listarSeriesBuscadas() {
-    	List<Serie> series = new ArrayList<>();
-    	series = dadosSeries.stream().map(d -> new Serie(d)).collect(Collectors.toList());
+//    	List<Serie> series = new ArrayList<>();
+//    	series = dadosSeries.stream().map(d -> new Serie(d)).collect(Collectors.toList());
 //		dadosSeries.forEach(System.out::println);
+    	
+    	List<Serie> series = repositorio.findAll();
     	series.stream().sorted(Comparator.comparing(Serie::getGenero)).forEach(System.out::println);;
 	}
 
 	private void buscarSerieWeb() {
         DadosSerie dados = getDadosSerie();
-        dadosSeries.add(dados);
+        Serie serie = new Serie(dados);
+        //adosSeries.add(dados);
+        repositorio.save(serie);
         System.out.println(dados);
     }
 

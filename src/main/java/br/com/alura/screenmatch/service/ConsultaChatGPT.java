@@ -3,10 +3,9 @@ package br.com.alura.screenmatch.service;
 import com.theokanning.openai.completion.CompletionRequest;
 import com.theokanning.openai.service.OpenAiService;
 
-//GPT API Key: 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
 public class ConsultaChatGPT {
     public static String obterTraducao(String texto) {
-        OpenAiService service = new OpenAiService("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");
+        OpenAiService service = new OpenAiService(System.getenv("OPENAI_APIKEY"));
 
 
         CompletionRequest requisicao = CompletionRequest.builder()
